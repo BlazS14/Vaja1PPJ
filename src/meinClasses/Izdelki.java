@@ -1,43 +1,122 @@
 package meinClasses;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Izdelki extends Izdelek {
+public class Izdelki implements JsonSupport{
 
-    protected Izdelek izdelek;
-    private BigDecimal kolicina;
+    public class posamezniIzdelek {
+        public Izdelek izdelek;
+        public int kolicina;
 
-    public Izdelki(Izdelek izdelek, BigDecimal kolicina) {
-        this.izdelek = izdelek;
-        this.kolicina = kolicina;
+        public posamezniIzdelek(Izdelek izdelek, int kolicina) {
+            this.izdelek = izdelek;
+            this.kolicina = kolicina;
+        }
+    }
+    private List<posamezniIzdelek> seznam = new ArrayList<>();
+    public Izdelki() {}
+    public Izdelki(List<posamezniIzdelek> seznam) {
+        this.seznam = seznam;
     }
 
-    public Izdelki(String name, BigDecimal price, boolean znizan, BigDecimal kolicina) {
-        this.izdelek = new Izdelek(name,price,znizan);
-        this.kolicina = kolicina;
+    public void addIzdelek(Izdelek a, int k) {
+        for(int i = 0; i < seznam.size(); i++) {
+            if(a.getId() == seznam.get(i).izdelek.getId()) {
+                seznam.get(i).kolicina += k;
+                return;
+            }
+        }
+        this.seznam.add(new posamezniIzdelek(a, k));
     }
 
-    public Izdelek getIzdelek() {
-        return izdelek;
+
+    public String toString() {
+        int lenDrzava = 0;
+        int lenIme = 0;
+        int lenId = 0;
+
+        for(posamezniIzdelek i : seznam)
+        {
+            if(i.izdelek.getDrzava().length()>lenDrzava)
+                lenDrzava = i.izdelek.getDrzava().length();
+            if(i.izdelek.getIme().length()>lenIme)
+                lenIme = i.izdelek.getIme().length();
+            if(String.valueOf(i.izdelek.getId()).length()>lenId)
+                lenId = String.valueOf(i.izdelek.getId()).length();
+        }
+        String izpis = "";
+        for(posamezniIzdelek i : seznam)
+        {
+            izpis += i.izdelek.toString(lenDrzava,lenIme,lenId) + '\n';
+        }
+        return izpis;
     }
 
-    public void setIzdelek(Izdelek izdelek) {
-        this.izdelek = izdelek;
+    public List<posamezniIzdelek> getSeznam() {
+        return seznam;
     }
 
-    public BigDecimal getKolicina() {
-        return kolicina;
+    public void setSeznam(List<posamezniIzdelek> seznam) {
+        this.seznam = seznam;
     }
 
-    public void setKolicina(BigDecimal kolicina) {
-        this.kolicina = kolicina;
+    public void setKolicina(int index, int k) {
+        if(index < seznam.size())
+            seznam.get(index).kolicina = k;
+    }
+
+    public int getKolicina(int index) {
+        if(index < seznam.size())
+            return seznam.get(index).kolicina;
+        else return -1;
+    }
+
+    public void setCenaBrezDDV(int index, float c) {
+        if(index < seznam.size())
+            seznam.get(index).izdelek.setCenaBrezDDV(c);
+    }
+
+    public float getCenaBrezDDV(int index) {
+        if(index < seznam.size())
+            return seznam.get(index).izdelek.getCenaBrezDDV();
+        else
+            return -1.0f;
+    }
+
+    public void setCenaZDDV(int index, float c) {
+        if(index < seznam.size())
+            seznam.get(index).izdelek.setCenaZDDV(c);
+    }
+
+    public float getCenaZDDV(int index) {
+        if(index < seznam.size())
+            return seznam.get(index).izdelek.getCenaZDDV();
+        else
+            return 0.0f;
+    }
+
+    public float getDDV(int index) {
+        if(index < seznam.size())
+            return seznam.get(index).izdelek.getDDV();
+        else
+            return 0.0f;
+    }
+
+    public long getId(int index) {
+        if(index < seznam.size())
+            return seznam.get(index).izdelek.getId();
+        else
+            return -1;
     }
 
     @Override
-    public String toString() {
-        return "Izdelki{" +
-                "izdelek=" + izdelek +
-                ", kolicina=" + kolicina +
-                '}';
+    public void fromJson(String s) {
+
+    }
+
+    @Override
+    public String toJson() {
+        return null;
     }
 }
