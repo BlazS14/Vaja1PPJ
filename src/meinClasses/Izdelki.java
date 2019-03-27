@@ -1,5 +1,10 @@
 package meinClasses;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +53,10 @@ public class Izdelki implements JsonSupport{
         String izpis = "";
         for(posamezniIzdelek i : seznam)
         {
-            izpis += i.izdelek.toString(lenDrzava,lenIme,lenId) + '\n';
+            izpis += i.izdelek.toString(lenDrzava,lenIme,lenId) + "  ";
+            if(i.izdelek.getCenaZDDV() / 10 < 1)
+                izpis += " ";
+            izpis+= String.valueOf(i.kolicina) + '\n';
         }
         return izpis;
     }
@@ -110,13 +118,14 @@ public class Izdelki implements JsonSupport{
             return -1;
     }
 
-    @Override
     public void fromJson(String s) {
-
+        Gson gson = new Gson();
+        Izdelki izd = gson.fromJson(s,Izdelki.class);
+        this.seznam = izd.seznam;
     }
 
-    @Override
     public String toJson() {
-        return null;
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

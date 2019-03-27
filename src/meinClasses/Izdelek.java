@@ -83,6 +83,10 @@ public class Izdelek implements Searchable {
         return false;
     }
 
+    public boolean checkDigit() {
+        return Izdelek.checkDigit(this.EAN);
+    }
+
     public long getId() {
         return id;
     }

@@ -11,6 +11,7 @@ public class Racun implements Searchable {
     private static int counter = 0;
 
     private Izdelki izdelki;
+    private String izdajatelj = "Marcatoor d.d.";
     private double cenaBrezDDV;
     private double cenaZDDV;
     private long id;
@@ -168,6 +169,7 @@ public class Racun implements Searchable {
         }
         izpis += "\nProdajalec: " + prodajalec;
         izpis += "\nDatum: " + datum.toString();
+        izpis += "\nIzdajatelj: " + izdajatelj;
         return izpis;
     }
 
