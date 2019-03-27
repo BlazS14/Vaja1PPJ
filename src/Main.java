@@ -19,13 +19,22 @@ public class Main {
         Izdelek B = new Izdelek("5226950246132", "Metla", 15.0f, 22.0f);
         Izdelek C = new Izdelek("6291041500214", "Nogavice", 2.99f, 22.0f);
         Izdelek W = new Izdelek("2404444490211", 2.99f, 22.0f);
+        Izdelek K1 = new Izdelek("9928032019101","Kupon 10%");
+        Izdelek K2 = new Izdelek("9928032019201","Kupon 20%");
+        K2.setCheckDigit();
+        K1.setCheckDigit();
+        System.out.println(K2.isKupon());
+        System.out.println(K1.getPopust());
 
         Izdelki izd = new Izdelki();
 
         izd.addIzdelek(A, 1);
         izd.addIzdelek(B, 2);
         izd.addIzdelek(C, 4);
-        //izd.addIzdelek(W, 1);
+        izd.addIzdelek(W, 1);
+        izd.addIzdelek(K1, 1);
+        izd.addIzdelek(K2, 1);
+
 
         System.out.println(izd.toString());
         System.out.println("\n\n");

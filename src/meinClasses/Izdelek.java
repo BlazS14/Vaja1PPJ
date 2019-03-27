@@ -1,7 +1,14 @@
 package meinClasses;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import org.omg.CORBA.DATA_CONVERSION;
+
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 public class Izdelek implements Searchable {
 
@@ -26,6 +33,13 @@ public class Izdelek implements Searchable {
         this.oddelek = "Import";
         this.cenaZDDV = cenaBrezDDV + cenaBrezDDV * (DDV / 100);
         this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
+        this.flagWeighable = false;
+        setDrzavaFromEAN();
+    }
+
+    public Izdelek(String EAN,String ime) {
+        this.EAN = EAN;
+        this.ime = ime;
         this.flagWeighable = false;
         setDrzavaFromEAN();
     }
@@ -64,9 +78,12 @@ public class Izdelek implements Searchable {
 
 
     public String toString(int lenDrzava,int lenIme, int lenId) {
-
-
         String izpis = "";
+        if(this.isKupon())
+        {
+            izpis += "\t \t \t KUPON ZA " + String.valueOf(this.getPopust()) + "% !!!";
+        }else{
+
         izpis += this.id;
         for(int i = String.valueOf(this.id).length()-1; i<lenId; i++)
             izpis += ' ';
@@ -81,6 +98,7 @@ public class Izdelek implements Searchable {
         for(int i = this.ime.length()-1; i<lenIme; i++)
             izpis += ' ';
         izpis += ' ' + String.valueOf(this.cenaBrezDDV) + "  " + String.valueOf(this.DDV) + "%  " + String.valueOf(this.cenaZDDV) + "  ";
+        }
         return izpis;
     }
 
@@ -187,6 +205,7 @@ public class Izdelek implements Searchable {
             kodaDrzave *= 10;
             kodaDrzave += Integer.parseInt(e[i]);
         }
+        if(kodaDrzave / 10 != 99){
         if(kodaDrzave <= 139)
             drzava = "ZDA";
         else if(kodaDrzave >= 200 && kodaDrzave <= 299)
@@ -281,8 +300,7 @@ public class Izdelek implements Searchable {
             drzava = "Hungary";
         else if(kodaDrzave >= 600 && kodaDrzave <= 601)
             drzava = "South Africa";
-
-        else drzava = "Null";
+        else drzava = "Null";}
     }
 
     private void setWeighable() {
@@ -409,5 +427,45 @@ public class Izdelek implements Searchable {
         if(this.toString(0,0,0).contains(s))
             return true;
         return false;
+    }
+
+    public boolean isKupon(){
+        String[] e = this.EAN.split("");
+        int mark = 0;
+        for(int i = 0; i != 2; i++) {
+            mark *= 10;
+            mark += Integer.parseInt(e[i]);
+        }
+
+        if(mark != 99 || !this.checkDigit())
+            return false;
+
+        int date = 0;
+        for(int i = 2; i != 10; i++) {
+            date *= 10;
+            date += Integer.parseInt(e[i]);
+        }
+        SimpleDateFormat originalFormat = new SimpleDateFormat("ddMMyyyy");
+        String datum = String.valueOf(date);
+        Date d = new Date();
+        try {
+           d = originalFormat.parse(datum);
+        }catch (ParseException i){};
+
+        Date currentDate = new Date();
+        if(d.compareTo(currentDate) <= 0)
+            return false;
+        return true;
+    }
+
+    public int getPopust()
+    {
+        String[] e = this.EAN.split("");
+        int mark = 0;
+        for(int i = 10; i != 12; i++) {
+            mark *= 10;
+            mark += Integer.parseInt(e[i]);
+        }
+        return mark;
     }
 }

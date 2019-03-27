@@ -27,7 +27,7 @@ public class Izdelki implements JsonSupport{
 
     public void addIzdelek(Izdelek a, int k) {
         for(int i = 0; i < seznam.size(); i++) {
-            if(a.getId() == seznam.get(i).izdelek.getId()) {
+            if(a.getId() == seznam.get(i).izdelek.getId() && !a.isKupon()) {
                 seznam.get(i).kolicina += k;
                 return;
             }
@@ -43,19 +43,23 @@ public class Izdelki implements JsonSupport{
 
         for(posamezniIzdelek i : seznam)
         {
+            if(!i.izdelek.isKupon()){
             if(i.izdelek.getDrzava().length()>lenDrzava)
                 lenDrzava = i.izdelek.getDrzava().length();
             if(i.izdelek.getIme().length()>lenIme)
                 lenIme = i.izdelek.getIme().length();
             if(String.valueOf(i.izdelek.getId()).length()>lenId)
                 lenId = String.valueOf(i.izdelek.getId()).length();
+            }
         }
         String izpis = "";
         for(posamezniIzdelek i : seznam)
         {
+
             izpis += i.izdelek.toString(lenDrzava,lenIme,lenId) + "  ";
             if(i.izdelek.getCenaZDDV() / 10 < 1)
                 izpis += " ";
+            if(!i.izdelek.isKupon())
             izpis+= String.valueOf(i.kolicina) + ' ';
             if(i.izdelek.isFlagWeighable())
                 izpis+= String.valueOf(i.izdelek.getWeight()) + 'g';

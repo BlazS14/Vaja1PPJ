@@ -144,19 +144,22 @@ public class Racun implements Searchable {
     public void izracunajCeno(){
         cenaBrezDDV = 0.0;
         cenaZDDV = 0.0;
+        int popust = 0;
         for(Izdelki.posamezniIzdelek i : izdelki.getSeznam()){
 
             if(i.izdelek.isFlagWeighable()){
                 cenaBrezDDV += i.izdelek.getCenaBrezDDV() * i.kolicina * (i.izdelek.getWeight()/1000);
                 cenaZDDV += i.izdelek.getCenaZDDV() * i.kolicina * (i.izdelek.getWeight()/1000);
+            }else if(i.izdelek.isKupon()){
+                popust += i.izdelek.getPopust();
             }else{
                 cenaBrezDDV += i.izdelek.getCenaBrezDDV() * i.kolicina;
                 cenaZDDV += i.izdelek.getCenaZDDV() * i.kolicina;
             }
 
         }
-        this.cenaBrezDDV = (float)((int)(cenaBrezDDV *100f ))/100f;
-        this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
+        this.cenaBrezDDV = (float)((int)(cenaBrezDDV *100f ))/100f/100*(100-popust);
+        this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f/100*(100-popust);
     }
 
     @Override
