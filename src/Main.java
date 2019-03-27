@@ -17,13 +17,15 @@ public class Main {
 
         Izdelek A = new Izdelek("1103526350767", "Majeron", 12.0f, 22.0f);
         Izdelek B = new Izdelek("5226950246132", "Metla", 15.0f, 22.0f);
-        Izdelek C = new Izdelek("1234987908454", "Nogavice", 2.99f, 22.0f);
+        Izdelek C = new Izdelek("6291041500214", "Nogavice", 2.99f, 22.0f);
+        Izdelek W = new Izdelek("2404444490211", 2.99f, 22.0f);
 
         Izdelki izd = new Izdelki();
 
         izd.addIzdelek(A, 1);
         izd.addIzdelek(B, 2);
         izd.addIzdelek(C, 4);
+        //izd.addIzdelek(W, 1);
 
         System.out.println(izd.toString());
         System.out.println("\n\n");
@@ -39,9 +41,10 @@ public class Main {
         Racun R2 = new Racun(izd, "haha ne", P1);
         Racun R3 = new Racun(izd, "haha ne", P2);
 
-        System.out.println("Prava: " + A.checkDigit("6291041500213"));
-        System.out.println("Napacna: " + A.checkDigit("6291041500214"));
-        System.out.println("Prava: " + A.checkDigit("9789616555104"));
+
+        System.out.println(C.checkDigit());
+        C.setCheckDigit();
+        System.out.println(C.checkDigit());
 
         System.out.println(B.search("metl"));
         System.out.println(B.search("Metl"));
@@ -60,6 +63,9 @@ public class Main {
         izdread.fromJson(Helper.readFile("Izdelki.json"));
 
         System.out.println(izdread.toString());
+        System.out.println(W.getWeight());
+        W.setWeight(999);
+        System.out.println(W.toString());
     }
 
 }

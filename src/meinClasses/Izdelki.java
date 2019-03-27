@@ -56,7 +56,10 @@ public class Izdelki implements JsonSupport{
             izpis += i.izdelek.toString(lenDrzava,lenIme,lenId) + "  ";
             if(i.izdelek.getCenaZDDV() / 10 < 1)
                 izpis += " ";
-            izpis+= String.valueOf(i.kolicina) + '\n';
+            izpis+= String.valueOf(i.kolicina) + ' ';
+            if(i.izdelek.isFlagWeighable())
+                izpis+= String.valueOf(i.izdelek.getWeight()) + 'g';
+            izpis+='\n';
         }
         return izpis;
     }

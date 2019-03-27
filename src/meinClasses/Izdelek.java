@@ -1,14 +1,19 @@
 package meinClasses;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 public class Izdelek implements Searchable {
 
 
     private long id;
     private String EAN;
     private String ime;
+    private boolean flagWeighable;
     private float cenaBrezDDV, cenaZDDV;
     private float DDV;
     private String drzava;
+    private String oddelek;
     static private long lastId = 0;
 
     public Izdelek(){};
@@ -18,8 +23,10 @@ public class Izdelek implements Searchable {
         this.ime = ime;
         this.cenaBrezDDV = cena;
         this.DDV = DDV;
+        this.oddelek = "Import";
         this.cenaZDDV = cenaBrezDDV + cenaBrezDDV * (DDV / 100);
         this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
+        this.flagWeighable = false;
         setDrzavaFromEAN();
     }
 
@@ -27,11 +34,25 @@ public class Izdelek implements Searchable {
         this.id = ++lastId;
         this.EAN = EAN;
         this.ime = ime;
+        this.flagWeighable = false;
+        this.cenaBrezDDV = cena;
+        this.DDV = DDV;
+        this.oddelek = "Import";
+        this.cenaZDDV = cenaBrezDDV + cenaBrezDDV * (DDV / 100);
+        this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
+        this.drzava = drzava;
+    }
+
+    public Izdelek(String EAN, float cena, float DDV) {
+        this.id = ++lastId;
+        this.EAN = EAN;
+        this.ime = ime;
         this.cenaBrezDDV = cena;
         this.DDV = DDV;
         this.cenaZDDV = cenaBrezDDV + cenaBrezDDV * (DDV / 100);
         this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
-        this.drzava = drzava;
+        this.flagWeighable = true;
+        setDrzavaFromEAN();
     }
 
     @Override
@@ -139,6 +160,14 @@ public class Izdelek implements Searchable {
         return drzava;
     }
 
+    public boolean isFlagWeighable() {
+        return flagWeighable;
+    }
+
+    public void setFlagWeighable(boolean flagWeighable) {
+        this.flagWeighable = flagWeighable;
+    }
+
     public void setDrzava(String drzava) {
         this.drzava = drzava;
     }
@@ -160,8 +189,8 @@ public class Izdelek implements Searchable {
         }
         if(kodaDrzave <= 139)
             drzava = "ZDA";
-        else if(kodaDrzave == 275)
-            drzava = "Palestine";
+        else if(kodaDrzave >= 200 && kodaDrzave <= 299)
+            setWeighable();
         else if(kodaDrzave >= 300 && kodaDrzave <= 379)
             drzava = "France and Monaco";
         else if(kodaDrzave == 380)
@@ -254,6 +283,126 @@ public class Izdelek implements Searchable {
             drzava = "South Africa";
 
         else drzava = "Null";
+    }
+
+    private void setWeighable() {
+        this.drzava = "Slovenia";
+        int kodaOddelka = 0;
+        String[] e = EAN.split("");
+        for(int i = 0; i < 3; i++) {
+            kodaOddelka *= 10;
+            kodaOddelka += Integer.parseInt(e[i]);
+        }
+
+        int kodaIzdelka = 0;
+        for(int i = 3; i < 7; i++) {
+            kodaIzdelka *= 10;
+            kodaIzdelka += Integer.parseInt(e[i]);
+        }
+
+        int checkDigit = 0;
+        checkDigit += Integer.parseInt(e[12]);
+
+        if(!this.checkDigit()){
+            setCheckDigit();
+        }
+
+        if(kodaOddelka == 240) {
+            this.oddelek="Sadje";
+            if(kodaIzdelka == 4444)
+               this.ime = "Jabolka";
+            else if(kodaIzdelka == 6666)
+                this.ime="Banane";
+            else if(kodaIzdelka == 1212)
+                this.ime="Jagode";
+            else if(kodaIzdelka == 1024)
+                this.ime="Hruske";
+
+        }else if(kodaOddelka== 241){
+            this.oddelek = "Zelenjava";
+            if(kodaIzdelka == 4444)
+                this.ime = "Paprika";
+            else if(kodaIzdelka == 6666)
+                this.ime="Cebula";
+            else if(kodaIzdelka == 1212)
+                this.ime="Cesen";
+            else if(kodaIzdelka == 1024)
+                this.ime="Paradiznik";
+
+        }else if(kodaOddelka== 241){
+            this.oddelek = "Meso";
+            if(kodaIzdelka == 4444)
+                this.ime = "Svinjsko plece";
+            else if(kodaIzdelka == 6666)
+                this.ime="Piscancja prsa";
+            else if(kodaIzdelka == 1212)
+                this.ime="Kranjske Kosak";
+            else if(kodaIzdelka == 1024)
+                this.ime="Goveji hrbet";
+
+        }else if(kodaOddelka== 241){
+            this.oddelek = "Kruh";
+            if(kodaIzdelka == 4444)
+                this.ime = "Beli kolac";
+            else if(kodaIzdelka == 6666)
+                this.ime="Bageta";
+            else if(kodaIzdelka == 1212)
+                this.ime="Crni kolac";
+            else if(kodaIzdelka == 1024)
+                this.ime="Polcrni kolac";
+
+        }else if(kodaOddelka== 241){
+            this.oddelek = "Delikatesa";
+            if(kodaIzdelka == 4444)
+                this.ime = "Posebna Poli";
+            else if(kodaIzdelka == 6666)
+                this.ime="Sunka Ave";
+            else if(kodaIzdelka == 1212)
+                this.ime="Cajna Ave";
+            else if(kodaIzdelka == 1024)
+                this.ime="Tlacenka Kras";
+        }
+    }
+
+    public void setCheckDigit() {
+        int sum = 0;
+        int last = 0;
+        String[] d = this.EAN.split("");
+        for(short i = 0; i < 13; i++) {
+            if(i % 2 == 1 && i < 12)
+                sum += 3* Integer.parseInt(d[i]);
+            else if(i % 2 != 1 && i < 12)
+                sum += Integer.parseInt(d[i]);
+            else if(i==12)
+                last = (int) ((10 - (sum % 10)) % 10);
+        }
+        d[12] = String.valueOf(last);
+        System.out.println(this.EAN + '\n');
+        this.EAN = String.join("",d);
+        System.out.println(this.EAN + '\n');
+    }
+
+    public int getWeight(){
+
+        String[] e = EAN.split("");
+        int kodaTeze = 0;
+        for(int i = 7; i < 12; i++) {
+            kodaTeze *= 10;
+            kodaTeze += Integer.parseInt(e[i]);
+        }
+        return kodaTeze;
+    }
+
+    public void setWeight(int teza){
+
+        String[] e = EAN.split("");
+
+        for(int i = 11; i > 6; i--) {
+            e[i] = String.valueOf(teza%10);
+            teza = teza / 10;
+        }
+        this.EAN = String.join("",e);
+        this.setCheckDigit();
     }
 
     public boolean search(String s) {

@@ -145,8 +145,15 @@ public class Racun implements Searchable {
         cenaBrezDDV = 0.0;
         cenaZDDV = 0.0;
         for(Izdelki.posamezniIzdelek i : izdelki.getSeznam()){
-            cenaBrezDDV += i.izdelek.getCenaBrezDDV() * i.kolicina;
-            cenaZDDV += i.izdelek.getCenaZDDV() * i.kolicina;
+
+            if(i.izdelek.isFlagWeighable()){
+                cenaBrezDDV += i.izdelek.getCenaBrezDDV() * i.kolicina * (i.izdelek.getWeight()/1000);
+                cenaZDDV += i.izdelek.getCenaZDDV() * i.kolicina * (i.izdelek.getWeight()/1000);
+            }else{
+                cenaBrezDDV += i.izdelek.getCenaBrezDDV() * i.kolicina;
+                cenaZDDV += i.izdelek.getCenaZDDV() * i.kolicina;
+            }
+
         }
         this.cenaBrezDDV = (float)((int)(cenaBrezDDV *100f ))/100f;
         this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
