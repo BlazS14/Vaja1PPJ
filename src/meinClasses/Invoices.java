@@ -1,32 +1,35 @@
 package meinClasses;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Invoices implements JsonSupport{
 
-    private List<Racun> racuni = new ArrayList<>();
+    private List<Racun> seznam = new ArrayList<>();
 
     public List<Racun> getRacuni() {
-        return racuni;
+        return seznam;
     }
 
     public void setRacuni(List<Racun> racuni) {
-        this.racuni = racuni;
+        this.seznam = racuni;
     }
 
     public void addRacun(Racun r)
     {
-        this.racuni.add(r);
+        this.seznam.add(r);
     }
 
-    @Override
     public void fromJson(String s) {
-
+        Gson gson = new Gson();
+        Invoices i = gson.fromJson(s,Invoices.class);
+        this.seznam = i.seznam;
     }
 
-    @Override
     public String toJson() {
-        return null;
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }
