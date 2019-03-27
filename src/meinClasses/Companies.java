@@ -32,5 +32,5 @@ public class Companies implements JsonSupport{
         Gson gson = new Gson();
         return gson.toJson(this);
     }
-    }
+
 }
