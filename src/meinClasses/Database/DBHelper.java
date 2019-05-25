@@ -78,7 +78,6 @@ public final class DBHelper {
 
             dataSource = ds;
         }
-
         return dataSource;
     }
 }
