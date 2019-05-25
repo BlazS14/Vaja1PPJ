@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-public class Helper {
+public final class Helper {
+
+    private Helper(){};
+
     public static String readFile(String filepath){
 
         String ret;
@@ -13,7 +16,7 @@ public class Helper {
             ret = new Scanner(new File(filepath)).useDelimiter("\\Z").next();
         }catch(IOException i){
             return "File reading error!\n";
-        };
+        }
         return ret;
     }
 

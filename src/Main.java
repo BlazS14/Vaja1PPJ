@@ -3,6 +3,7 @@ import meinClasses.Izdelek;
 import meinClasses.Izdelki;
 import meinClasses.Podjetje;
 import meinClasses.Helper;
+import meinClasses.Database.DBHelper;
 
 
 import java.math.BigDecimal;
@@ -36,12 +37,11 @@ public class Main {
         izd.addIzdelek(K2, 1);
 
 
-        System.out.println(izd.toString());
         System.out.println("\n\n");
 
         Racun R1 = new Racun(izd, "Marko baje");
 
-        System.out.println(R1.toString());
+        //System.out.println(R1.toString());
         System.out.println("\n\n");
 
         Podjetje P1 = new Podjetje("Pipistrel", "+38630 808 888", "info@ppstrel.si", 45645645, Long.valueOf("6225480070"), true);
@@ -75,6 +75,10 @@ public class Main {
         System.out.println(W.getWeight());
         W.setWeight(999);
         System.out.println(W.toString());
+
+
+
+        DBHelper.testConnection();
     }
 
 }

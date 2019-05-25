@@ -41,31 +41,27 @@ public class Izdelek implements Searchable {
         this.EAN = EAN;
         this.ime = ime;
         this.flagWeighable = false;
+        drzava ="";
         setDrzavaFromEAN();
     }
 
     public Izdelek(String EAN, String ime, float cena, float DDV, String drzava) {
-        this.id = ++lastId;
-        this.EAN = EAN;
+        this(EAN, cena, DDV);
         this.ime = ime;
         this.flagWeighable = false;
-        this.cenaBrezDDV = cena;
-        this.DDV = DDV;
         this.oddelek = "Import";
-        this.cenaZDDV = cenaBrezDDV + cenaBrezDDV * (DDV / 100);
-        this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
         this.drzava = drzava;
     }
 
     public Izdelek(String EAN, float cena, float DDV) {
         this.id = ++lastId;
         this.EAN = EAN;
-        this.ime = ime;
         this.cenaBrezDDV = cena;
         this.DDV = DDV;
         this.cenaZDDV = cenaBrezDDV + cenaBrezDDV * (DDV / 100);
         this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
         this.flagWeighable = true;
+        drzava ="";
         setDrzavaFromEAN();
     }
 
@@ -300,7 +296,7 @@ public class Izdelek implements Searchable {
             drzava = "Hungary";
         else if(kodaDrzave >= 600 && kodaDrzave <= 601)
             drzava = "South Africa";
-        else drzava = "Null";}
+        else drzava = "";}
     }
 
     private void setWeighable() {
@@ -382,7 +378,7 @@ public class Izdelek implements Searchable {
         }
     }
 
-    public void setCheckDigit() {
+    public void setCheckDigit() { //TODO static
         int sum = 0;
         int last = 0;
         String[] d = this.EAN.split("");

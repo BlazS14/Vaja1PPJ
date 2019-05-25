@@ -21,13 +21,13 @@ public class Invoices implements JsonSupport{
     {
         this.seznam.add(r);
     }
-
+    @Override
     public void fromJson(String s) {
         Gson gson = new Gson();
         Invoices i = gson.fromJson(s,Invoices.class);
         this.seznam = i.seznam;
     }
-
+    @Override
     public String toJson() {
         Gson gson = new Gson();
         return gson.toJson(this);
