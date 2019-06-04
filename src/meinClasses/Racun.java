@@ -1,6 +1,9 @@
 package meinClasses;
 
+import meinClasses.Database.DBHelper;
+
 import java.math.BigDecimal;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -10,6 +13,7 @@ import java.util.List;
 public class Racun implements Searchable {
     private static int counter = 0;
 
+    public String uuid;
     private Izdelki izdelki;
     private String izdajatelj = "Marcatoor d.d.";
     private double cenaBrezDDV;
@@ -17,7 +21,7 @@ public class Racun implements Searchable {
     private long id;
     private String prodajalec;
     private Date datum;
-    private int davcnaStPodjetja;
+    private String davcnaStPodjetja;
     private boolean podjetjeDavcniZavezanec;
     private boolean originalRacun;
     static private long lastId = 0;
@@ -187,5 +191,85 @@ public class Racun implements Searchable {
         if(String.valueOf(cenaBrezDDV).contains(s) || String.valueOf(cenaZDDV).contains(s) || String.valueOf(id).contains(s) || prodajalec.contains(s) || String.valueOf(datum).contains(s) || String.valueOf(davcnaStPodjetja).contains(s))
             return true;
         return false;
+    }
+
+    public Racun getById(String uuid){
+        try {
+            Connection connection = DBHelper.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Racun WHERE idRacun = ?");
+            statement.setString(1,uuid);
+
+            ResultSet rs = statement.executeQuery();
+            return (Racun)rs;
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Pod.getById()! -- " + i.getMessage() + "\n");
+            return null;
+        }
+    }
+
+    public List<Racun> getAll(){
+        try {
+            List<Racun> list = null;
+            Connection connection = DBHelper.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT * FROM Racun");
+            for(int i = 0; i!=rs.getFetchSize();i++)
+            {
+                list.add((Racun)rs.getObject(i));
+            }
+            return list;
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Pod.getAll()! -- " + i.getMessage() + "\n");
+            return null;
+        }
+    }
+
+    public boolean insert(Racun m){
+        try {
+            Connection conn = DBHelper.getConnection();
+            PreparedStatement stat = conn.prepareStatement("INSERT INTO Racun (idRacun,total,total_val,created,modified) VALUES (unhex(replace(uuid(),'-','')),?,?,current_timestamp(),current_timestamp())");
+            stat.setDouble(1,m.getCenaBrezDDV());
+            stat.setDouble(2,m.getCenaZDDV());
+
+            return stat.execute();
+
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Pod.insert()! -- " + i.getMessage() + "\n");
+            return false;
+        }
+    }
+
+    public boolean update(Racun m){
+        try {
+            Connection conn = DBHelper.getConnection();
+            PreparedStatement stat = conn.prepareStatement("UPDATE Podjetje SET total=?,total_val=? WHERE idRacun = ?");
+            stat.setDouble(1,m.getCenaBrezDDV());
+            stat.setDouble(2,m.getCenaZDDV());
+            stat.setString(3,m.uuid);
+
+            return stat.execute();
+
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Pod.update()! -- " + i.getMessage() + "\n");
+            return false;
+        }
+    }
+
+    public boolean delete(Racun m){
+        try {
+            Connection conn = DBHelper.getConnection();
+            PreparedStatement stat = conn.prepareStatement("DELETE FROM Racun WHERE idRacun = ?");
+            stat.setString(1,m.uuid);
+
+            return stat.execute();
+
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Pod.delete()! -- " + i.getMessage() + "\n");
+            return false;
+        }
+    }
+
+    public Podjetje extractFromResultSet(ResultSet rs) throws SQLException {
+        return null;
     }
 }

@@ -2,11 +2,12 @@ package meinClasses;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import meinClasses.Database.DBHelper;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 public class Izdelki implements JsonSupport {
 
@@ -137,4 +138,6 @@ public class Izdelki implements JsonSupport {
         Gson gson = new Gson();
         return gson.toJson(this);
     }
+
+
 }

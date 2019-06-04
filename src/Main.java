@@ -44,8 +44,8 @@ public class Main {
         //System.out.println(R1.toString());
         System.out.println("\n\n");
 
-        Podjetje P1 = new Podjetje("Pipistrel", "+38630 808 888", "info@ppstrel.si", 45645645, Long.valueOf("6225480070"), true);
-        Podjetje P2 = new Podjetje("Perutnina Ptuj d.d.", "+38630 708 888", "info@pp.si", 45655645, Long.valueOf("6255480070"), false);
+        Podjetje P1 = new Podjetje("Pipistrel", "+38630 808 888", "info@ppstrel.si", "45645645","6225480070", true);
+        Podjetje P2 = new Podjetje("Perutnina Ptuj d.d.", "+38630 708 888", "info@pp.si", "45655645", "6255480070", false);
 
         Racun R2 = new Racun(izd, "haha ne", P1);
         Racun R3 = new Racun(izd, "haha ne", P2);
@@ -79,6 +79,8 @@ public class Main {
 
 
         DBHelper.testConnection();
+        DBHelper.fillDb("C:\\Users\\Blaz Satler\\IdeaProjects\\Vaja1PPJ\\resources\\en.openfoodfacts.org.products.csv",20);
+        A.insert(A);
     }
 
 }

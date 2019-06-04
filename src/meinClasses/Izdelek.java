@@ -1,25 +1,30 @@
 package meinClasses;
 
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import meinClasses.Database.DBHelper;
 import org.omg.CORBA.DATA_CONVERSION;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class Izdelek implements Searchable {
 
 
     private long id;
+    public short uuid;
     private String EAN;
     private String ime;
     private boolean flagWeighable;
     private float cenaBrezDDV, cenaZDDV;
     private float DDV;
     private String drzava;
+    private int zaloga;
     private String oddelek;
     static private long lastId = 0;
 
@@ -35,6 +40,20 @@ public class Izdelek implements Searchable {
         this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
         this.flagWeighable = false;
         setDrzavaFromEAN();
+    }
+
+    public Izdelek(String EAN, String ime, float cena, float DDV,int zal) {
+        this.id = ++lastId;
+        this.EAN = EAN;
+        this.ime = ime;
+        this.cenaBrezDDV = cena;
+        this.DDV = DDV;
+        this.zaloga = zal;
+        this.oddelek = "Import";
+        this.cenaZDDV = cenaBrezDDV + cenaBrezDDV * (DDV / 100);
+        this.cenaZDDV = (float)((int)(cenaZDDV *100f ))/100f;
+        this.flagWeighable = false;
+        //setDrzavaFromEAN();
     }
 
     public Izdelek(String EAN,String ime) {
@@ -116,6 +135,10 @@ public class Izdelek implements Searchable {
         if(Integer.parseInt(d[12]) == last)
             return true;
         return false;
+    }
+
+    public int getZaloga() {
+        return zaloga;
     }
 
     public boolean checkDigit() {
@@ -463,5 +486,91 @@ public class Izdelek implements Searchable {
             mark += Integer.parseInt(e[i]);
         }
         return mark;
+    }
+
+    public Izdelek getById(String uuid){
+        try {
+            Connection connection = DBHelper.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Izdelek WHERE idIzdelek = ?");
+            statement.setString(1,uuid);
+
+            ResultSet rs = statement.executeQuery();
+            return (Izdelek)rs;
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Izd.getById()! -- " + i.getMessage() + "\n");
+            return null;
+        }
+    }
+
+    public List<Izdelek> getAll(){
+        try {
+            List<Izdelek> list = null;
+            Connection connection = DBHelper.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT * FROM Izdelek");
+            for(int i = 0; i!=rs.getFetchSize();i++)
+            {
+                list.add((Izdelek)rs.getObject(i));
+            }
+            return list;
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Izd.getAll()! -- " + i.getMessage() + "\n");
+            return null;
+        }
+    }
+
+    public boolean insert(Izdelek m){
+        try {
+            Connection conn = DBHelper.getConnection();
+            PreparedStatement stat = conn.prepareStatement("INSERT INTO izdelek (idIzdelek,barcode,name,price,vat,stock,created,modified) VALUES (unhex(replace(uuid(),'-','')),?,?,?,?,?,current_timestamp(),current_timestamp())");
+            stat.setString(1,m.getEAN());
+            stat.setString(2,m.getIme());
+            stat.setFloat(3,m.getCenaBrezDDV());
+            stat.setFloat(4,m.getDDV());
+            stat.setInt(5,m.getZaloga());
+
+            return stat.execute();
+
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Izd.insert()! -- " + i.getMessage() + "\n");
+            return false;
+        }
+    }
+
+    public boolean update(Izdelek m){
+        try {
+            Connection conn = DBHelper.getConnection();
+            PreparedStatement stat = conn.prepareStatement("UPDATE izdelek (idIzdelek,barcode,name,price,vat,stock,created,modified) SET barcode=?,name=?,price=?,vat=?,stock=? WHERE idIzdelek = ?");
+            stat.setString(1,m.getEAN());
+            stat.setString(2,m.getIme());
+            stat.setFloat(3,m.getCenaBrezDDV());
+            stat.setFloat(4,m.getDDV());
+            stat.setInt(5,m.getZaloga());
+            stat.setShort(6,m.uuid);
+
+            return stat.execute();
+
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Izd.update()! -- " + i.getMessage() + "\n");
+            return false;
+        }
+    }
+
+    public boolean delete(Izdelek m){
+        try {
+            Connection conn = DBHelper.getConnection();
+            PreparedStatement stat = conn.prepareStatement("DELETE FROM Izdelek WHERE idIzdelek = ?");
+            stat.setShort(1,m.uuid);
+
+            return stat.execute();
+
+        } catch (java.sql.SQLException i) {
+            System.out.println("SQL napaka Izd.delete()! -- " + i.getMessage() + "\n");
+            return false;
+        }
+    }
+
+    public Izdelek extractFromResultSet(ResultSet rs) throws SQLException {
+        return null;
     }
 }
