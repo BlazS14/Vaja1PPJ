@@ -489,9 +489,9 @@ public class Izdelek implements Searchable {
     }
 
     public Izdelek getById(String uuid){
-        try {
-            Connection connection = DBHelper.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Izdelek WHERE idIzdelek = ?");
+        try (Connection connection = DBHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM Izdelek WHERE idIzdelek = ?")){
+
             statement.setString(1,uuid);
 
             ResultSet rs = statement.executeQuery();
@@ -503,10 +503,10 @@ public class Izdelek implements Searchable {
     }
 
     public List<Izdelek> getAll(){
-        try {
+        try (Connection connection = DBHelper.getConnection();
+             Statement statement = connection.createStatement()){
             List<Izdelek> list = null;
-            Connection connection = DBHelper.getConnection();
-            Statement statement = connection.createStatement();
+
             ResultSet rs = statement.executeQuery("SELECT * FROM Izdelek");
             for(int i = 0; i!=rs.getFetchSize();i++)
             {
@@ -520,9 +520,8 @@ public class Izdelek implements Searchable {
     }
 
     public boolean insert(Izdelek m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("INSERT INTO izdelek (idIzdelek,barcode,name,price,vat,stock,created,modified) VALUES (unhex(replace(uuid(),'-','')),?,?,?,?,?,current_timestamp(),current_timestamp())");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("INSERT INTO izdelek (idIzdelek,barcode,name,price,vat,stock,created,modified) VALUES (unhex(replace(uuid(),'-','')),?,?,?,?,?,current_timestamp(),current_timestamp())")){
             stat.setString(1,m.getEAN());
             stat.setString(2,m.getIme());
             stat.setFloat(3,m.getCenaBrezDDV());
@@ -538,9 +537,8 @@ public class Izdelek implements Searchable {
     }
 
     public boolean update(Izdelek m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("UPDATE izdelek (idIzdelek,barcode,name,price,vat,stock,created,modified) SET barcode=?,name=?,price=?,vat=?,stock=? WHERE idIzdelek = ?");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("UPDATE izdelek (idIzdelek,barcode,name,price,vat,stock,created,modified) SET barcode=?,name=?,price=?,vat=?,stock=? WHERE idIzdelek = ?")){
             stat.setString(1,m.getEAN());
             stat.setString(2,m.getIme());
             stat.setFloat(3,m.getCenaBrezDDV());
@@ -557,9 +555,8 @@ public class Izdelek implements Searchable {
     }
 
     public boolean delete(Izdelek m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("DELETE FROM Izdelek WHERE idIzdelek = ?");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("DELETE FROM Izdelek WHERE idIzdelek = ?")){
             stat.setShort(1,m.uuid);
 
             return stat.execute();

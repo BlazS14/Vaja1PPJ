@@ -99,9 +99,8 @@ public class Podjetje implements Searchable {
     }
 
     public Podjetje getById(String uuid){
-        try {
-            Connection connection = DBHelper.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Podjetje WHERE idIzdelek = ?");
+        try (Connection connection = DBHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM Podjetje WHERE idIzdelek = ?")){
             statement.setString(1,uuid);
 
             ResultSet rs = statement.executeQuery();
@@ -113,10 +112,9 @@ public class Podjetje implements Searchable {
     }
 
     public List<Podjetje> getAll(){
-        try {
+        try (Connection connection = DBHelper.getConnection();
+             Statement statement = connection.createStatement()){
             List<Podjetje> list = null;
-            Connection connection = DBHelper.getConnection();
-            Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM Podjetje");
             for(int i = 0; i!=rs.getFetchSize();i++)
             {
@@ -130,9 +128,8 @@ public class Podjetje implements Searchable {
     }
 
     public boolean insert(Podjetje m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("INSERT INTO Podjetje (idPodjetje,name,tax_num,registration_number,phone_number,taxpayer,adress,created,modified) VALUES (unhex(replace(uuid(),'-','')),?,?,?,?,?,?,current_timestamp(),current_timestamp())");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("INSERT INTO Podjetje (idPodjetje,name,tax_num,registration_number,phone_number,taxpayer,adress,created,modified) VALUES (unhex(replace(uuid(),'-','')),?,?,?,?,?,?,current_timestamp(),current_timestamp())")){
             stat.setString(1,m.getIme());
             stat.setString(2,m.getDavcnaSt());
             stat.setString(3,m.getMaticnaSt());
@@ -149,9 +146,8 @@ public class Podjetje implements Searchable {
     }
 
     public boolean update(Podjetje m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("UPDATE Podjetje SET name=?,tax_num=?,registration_number=?,phone_number=?,taxpayer=?,adress=? WHERE idPodjetje = ?");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("UPDATE Podjetje SET name=?,tax_num=?,registration_number=?,phone_number=?,taxpayer=?,adress=? WHERE idPodjetje = ?")){
             stat.setString(1,m.getIme());
             stat.setString(2,m.getDavcnaSt());
             stat.setString(3,m.getMaticnaSt());
@@ -170,9 +166,8 @@ public class Podjetje implements Searchable {
     }
 
     public boolean delete(Podjetje m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("DELETE FROM Podjetje WHERE idPodjetje = ?");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("DELETE FROM Podjetje WHERE idPodjetje = ?")){
             stat.setString(1,m.uuid);
 
             return stat.execute();

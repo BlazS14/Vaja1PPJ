@@ -194,24 +194,22 @@ public class Racun implements Searchable {
     }
 
     public Racun getById(String uuid){
-        try {
-            Connection connection = DBHelper.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Racun WHERE idRacun = ?");
+        try (Connection connection = DBHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM Racun WHERE idRacun = ?")){
             statement.setString(1,uuid);
 
             ResultSet rs = statement.executeQuery();
             return (Racun)rs;
         } catch (java.sql.SQLException i) {
-            System.out.println("SQL napaka Pod.getById()! -- " + i.getMessage() + "\n");
+            System.out.println("SQL napaka Rac.getById()! -- " + i.getMessage() + "\n");
             return null;
         }
     }
 
     public List<Racun> getAll(){
-        try {
+        try (Connection connection = DBHelper.getConnection();
+             Statement statement = connection.createStatement()){
             List<Racun> list = null;
-            Connection connection = DBHelper.getConnection();
-            Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM Racun");
             for(int i = 0; i!=rs.getFetchSize();i++)
             {
@@ -219,30 +217,28 @@ public class Racun implements Searchable {
             }
             return list;
         } catch (java.sql.SQLException i) {
-            System.out.println("SQL napaka Pod.getAll()! -- " + i.getMessage() + "\n");
+            System.out.println("SQL napaka Rac.getAll()! -- " + i.getMessage() + "\n");
             return null;
         }
     }
 
     public boolean insert(Racun m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("INSERT INTO Racun (idRacun,total,total_val,created,modified) VALUES (unhex(replace(uuid(),'-','')),?,?,current_timestamp(),current_timestamp())");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("INSERT INTO Racun (idRacun,total,total_val,created,modified) VALUES (unhex(replace(uuid(),'-','')),?,?,current_timestamp(),current_timestamp())")){
             stat.setDouble(1,m.getCenaBrezDDV());
             stat.setDouble(2,m.getCenaZDDV());
 
             return stat.execute();
 
         } catch (java.sql.SQLException i) {
-            System.out.println("SQL napaka Pod.insert()! -- " + i.getMessage() + "\n");
+            System.out.println("SQL napaka Rac.insert()! -- " + i.getMessage() + "\n");
             return false;
         }
     }
 
     public boolean update(Racun m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("UPDATE Podjetje SET total=?,total_val=? WHERE idRacun = ?");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("UPDATE Podjetje SET total=?,total_val=? WHERE idRacun = ?")){
             stat.setDouble(1,m.getCenaBrezDDV());
             stat.setDouble(2,m.getCenaZDDV());
             stat.setString(3,m.uuid);
@@ -250,21 +246,20 @@ public class Racun implements Searchable {
             return stat.execute();
 
         } catch (java.sql.SQLException i) {
-            System.out.println("SQL napaka Pod.update()! -- " + i.getMessage() + "\n");
+            System.out.println("SQL napaka Rac.update()! -- " + i.getMessage() + "\n");
             return false;
         }
     }
 
     public boolean delete(Racun m){
-        try {
-            Connection conn = DBHelper.getConnection();
-            PreparedStatement stat = conn.prepareStatement("DELETE FROM Racun WHERE idRacun = ?");
+        try (Connection conn = DBHelper.getConnection();
+             PreparedStatement stat = conn.prepareStatement("DELETE FROM Racun WHERE idRacun = ?")){
             stat.setString(1,m.uuid);
 
             return stat.execute();
 
         } catch (java.sql.SQLException i) {
-            System.out.println("SQL napaka Pod.delete()! -- " + i.getMessage() + "\n");
+            System.out.println("SQL napaka Rac.delete()! -- " + i.getMessage() + "\n");
             return false;
         }
     }
